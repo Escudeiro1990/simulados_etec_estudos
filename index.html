@@ -72,6 +72,21 @@
   .stat-box .val { font-size:1.5rem; font-weight:bold; color:var(--azul); }
   .stat-box .lbl { font-size:.74rem; color:#666; margin-top:2px; }
 </style>
+<style>
+  #wrap-extra { max-width:880px; margin:12px auto 0; padding:0 14px; }
+  #btn-abrir-extra { display:block; width:100%; padding:11px 20px; background:linear-gradient(135deg,#1a4fa0,#2d6fce); color:white; border:none; border-radius:9px; font-size:.92rem; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(26,79,160,.3); transition:opacity .2s; text-align:center; }
+  #btn-abrir-extra:hover { opacity:.88; }
+  #panel-extra { background:white; border:2px solid var(--azul); border-radius:12px; padding:18px 22px; margin-top:10px; display:none; }
+  #panel-extra h3 { color:var(--azul); margin-bottom:12px; font-size:.98rem; }
+  .ex-row { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+  .ex-group { display:flex; flex-direction:column; gap:4px; flex:1; min-width:130px; }
+  .ex-group label { font-size:.76rem; font-weight:700; color:#555; }
+  .ex-group select, .ex-group input { padding:7px 10px; border:1.5px solid var(--borda); border-radius:7px; font-size:.84rem; background:white; }
+  #btn-add { padding:9px 20px; background:var(--verde); color:white; border:none; border-radius:7px; font-size:.87rem; font-weight:700; cursor:pointer; white-space:nowrap; margin-top:2px; }
+  #btn-add:hover { opacity:.88; }
+  .ex-info { font-size:.74rem; color:#777; margin-top:9px; line-height:1.5; }
+  #msg-extra { font-size:.82rem; margin-top:7px; font-weight:600; min-height:18px; }
+</style>
 </head>
 <body>
 
@@ -107,6 +122,36 @@
   <div class="placar-num" id="pf"></div>
   <p id="msg-r"></p>
   <button id="btn-rei" onclick="reiniciar()">↺ Refazer Simulado</button>
+</div>
+
+
+<!-- ── PAINEL DE QUESTÕES EXTRAS (fora do #main, não é apagado pelo render) ── -->
+<div id="wrap-extra">
+  <button id="btn-abrir-extra" onclick="togglePanel()">➕ Adicionar Mais Questões ao Simulado</button>
+  <div id="panel-extra">
+    <h3>📋 Banco de questões extras — funciona sem internet</h3>
+    <div class="ex-row">
+      <div class="ex-group">
+        <label>Categoria</label>
+        <select id="cat-extra">
+          <option value="todas">Todas as categorias</option>
+          <option value="informatica">🖥️ Informática</option>
+          <option value="pc">🧠 Pensamento Computacional</option>
+          <option value="ia">🤖 Inteligência Artificial</option>
+          <option value="legislacao">📜 Legislação</option>
+          <option value="adm">🏛️ Adm. Pública</option>
+          <option value="lai">🔓 Lei Acesso à Informação</option>
+        </select>
+      </div>
+      <div class="ex-group" style="max-width:110px">
+        <label>Quantidade</label>
+        <input type="number" id="qtd-extra" value="10" min="1" max="50">
+      </div>
+      <button id="btn-add" onclick="adicionarExtras()">✅ Adicionar</button>
+    </div>
+    <p class="ex-info">As questões são sorteadas aleatoriamente e as alternativas sempre embaralhadas. Questões já adicionadas não se repetem na mesma sessão.</p>
+    <div id="msg-extra"></div>
+  </div>
 </div>
 
 <script>
@@ -1969,37 +2014,348 @@ const Q = [
  c:1, exp:'A geração de imagens por IA levanta questões éticas e legais: modelos treinados com obras de artistas sem autorização podem reproduzir seus estilos; a titularidade dos direitos sobre imagens geradas ainda não tem regulamentação consolidada.'}
 ];
 
+
+/* ───── BANCO EXTRA DE QUESTÕES ───── */
+const QEXTRA = [
+
+/* INFORMÁTICA */
+{cat:'informatica',src:'extra',
+ e:'(VUNESP – estilo) No Microsoft Excel, a função que retorna o maior valor de um intervalo é:',
+ a:['MAIOR()','MAX()','MÁXIMO()','TOPO()'],
+ c:1, exp:'A função MAX() retorna o maior valor numérico de um intervalo de células. No Excel em português, também pode aparecer como MÁXIMO() em algumas versões, mas MAX é a forma padrão.'},
+
+{cat:'informatica',src:'extra',
+ e:'(FCC – estilo) No Word, para aplicar negrito em um texto selecionado, utiliza-se o atalho:',
+ a:['Ctrl+N','Ctrl+B','Ctrl+G','Ctrl+E'],
+ c:1, exp:'Ctrl+B (Bold) aplica negrito no Word em inglês, que é o padrão internacional. Em pt-BR, algumas versões aceitam Ctrl+N, mas Ctrl+B é o atalho universal correto.'},
+
+{cat:'informatica',src:'extra',
+ e:'(CESGRANRIO – estilo) O protocolo HTTPS difere do HTTP principalmente por:',
+ a:['Ser mais rápido','Usar criptografia SSL/TLS para proteger a comunicação','Funcionar apenas em redes locais','Não exigir autenticação de servidor'],
+ c:1, exp:'HTTPS adiciona uma camada de segurança via SSL/TLS, criptografando os dados transmitidos entre o navegador e o servidor, impedindo interceptação e garantindo autenticidade do site.'},
+
+{cat:'informatica',src:'extra',
+ e:'(CEETEPS – estilo) No Excel 2016, a fórmula =SE(A1>10;"Aprovado";"Reprovado") retorna "Aprovado" quando:',
+ a:['A1 for igual a 10','A1 for menor que 10','A1 for maior que 10','A1 estiver vazia'],
+ c:2, exp:'A função SE avalia a condição lógica A1>10. Se A1 for estritamente maior que 10 (11, 12, ...), retorna "Aprovado". Se for 10 ou menor, retorna "Reprovado".'},
+
+{cat:'informatica',src:'extra',
+ e:'(CESPE – estilo) Um firewall de rede tem como principal função:',
+ a:['Aumentar a velocidade da conexão com a internet','Controlar o tráfego de rede, permitindo ou bloqueando pacotes conforme regras definidas','Fazer backup automático de arquivos','Detectar e remover vírus de computadores'],
+ c:1, exp:'Firewall é um sistema de segurança que monitora e controla o tráfego de rede com base em regras de segurança predefinidas, atuando como barreira entre redes confiáveis e não confiáveis.'},
+
+{cat:'informatica',src:'extra',
+ e:'(FGV – estilo) No Windows 10, o atalho para abrir o Gerenciador de Tarefas diretamente é:',
+ a:['Ctrl+Alt+Del','Ctrl+Shift+Esc','Windows+X','Alt+F4'],
+ c:1, exp:'Ctrl+Shift+Esc abre o Gerenciador de Tarefas diretamente. Ctrl+Alt+Del exibe um menu de opções onde o Gerenciador de Tarefas é uma das escolhas.'},
+
+{cat:'informatica',src:'extra',
+ e:'(VUNESP – estilo) No PowerPoint, qual recurso permite que o apresentador veja suas anotações enquanto o público vê apenas os slides?',
+ a:['Modo de Leitura','Modo de Exibição do Apresentador','Classificação de Slides','Modo Esboço'],
+ c:1, exp:'O Modo do Apresentador (Presenter View) exibe para o apresentador: slide atual, próximo slide, anotações e cronômetro — enquanto o público vê apenas o slide em tela cheia.'},
+
+{cat:'informatica',src:'extra',
+ e:'(CEETEPS – estilo) No Excel, a referência $B$3 é chamada de referência:',
+ a:['Relativa','Mista','Absoluta','Circular'],
+ c:2, exp:'A referência absoluta usa o símbolo $ antes da coluna e da linha ($B$3), fixando a célula. Ao copiar a fórmula para outro lugar, ela sempre aponta para B3. Referência relativa (B3) se ajusta ao ser copiada.'},
+
+{cat:'informatica',src:'extra',
+ e:'(FCC – estilo) Qual extensão de arquivo é nativa do Microsoft Word 2007 em diante?',
+ a:['.doc','.rtf','.docx','.odt'],
+ c:2, exp:'A partir do Office 2007, a Microsoft adotou o formato Open XML. Para Word, a extensão padrão passou a ser .docx. O formato .doc era usado até o Word 2003.'},
+
+{cat:'informatica',src:'extra',
+ e:'(CESGRANRIO – estilo) Em redes de computadores, o endereço IP 192.168.0.1 pertence à classe:',
+ a:['Classe A','Classe B','Classe C','Classe D'],
+ c:2, exp:'Endereços IP iniciando com 192.168.x.x pertencem à Classe C (intervalo 192.0.0.0 a 223.255.255.255). São amplamente usados em redes locais privadas (RFC 1918).'},
+
+{cat:'informatica',src:'extra',
+ e:'(VUNESP – estilo) No Excel, a função CONT.SE(A1:A10;">=7") conta:',
+ a:['A soma de todos os valores maiores ou iguais a 7 no intervalo','A quantidade de células com valor maior ou igual a 7 no intervalo A1:A10','A média dos valores acima de 7','O maior valor acima de 7'],
+ c:1, exp:'CONT.SE conta o número de células que satisfazem um critério. A fórmula conta quantas células em A1:A10 têm valor maior ou igual a 7.'},
+
+{cat:'informatica',src:'extra',
+ e:'(CESPE – estilo) O conceito de "nuvem híbrida" em computação em nuvem refere-se a:',
+ a:['Uma nuvem acessível apenas por dispositivos móveis','A combinação de nuvem pública e privada, permitindo dados e aplicações trafegarem entre elas','Uma nuvem exclusiva para uso governamental','Armazenamento em múltiplos países simultaneamente'],
+ c:1, exp:'Nuvem híbrida combina infraestrutura de nuvem pública (AWS, Azure, GCP) com nuvem privada (on-premise), permitindo que dados e aplicações se movam entre ambientes conforme necessidade de segurança e escalabilidade.'},
+
+{cat:'informatica',src:'extra',
+ e:'(FGV – estilo) O atalho Ctrl+Z em aplicativos Windows tem a função de:',
+ a:['Salvar o arquivo atual','Desfazer a última ação realizada','Refazer a última ação desfeita','Fechar o programa'],
+ c:1, exp:'Ctrl+Z é o atalho universal de "Desfazer" (Undo) no Windows, revertendo a última ação. Ctrl+Y ou Ctrl+Shift+Z refaz a ação desfeita.'},
+
+{cat:'informatica',src:'extra',
+ e:'(CEETEPS – estilo) Em uma planilha Excel com os valores 5, 10, 15, 20 nas células A1:A4, o resultado de =MÉDIA(A1:A4) é:',
+ a:['10','12,5','50','15'],
+ c:1, exp:'A média aritmética de 5, 10, 15 e 20 é (5+10+15+20)/4 = 50/4 = 12,5. A função MÉDIA() calcula a média aritmética do intervalo.'},
+
+{cat:'informatica',src:'extra',
+ e:'(VUNESP – estilo) Qual protocolo é usado para envio de e-mails?',
+ a:['FTP','HTTP','SMTP','POP3'],
+ c:2, exp:'SMTP (Simple Mail Transfer Protocol) é o protocolo padrão para envio de e-mails entre servidores. POP3 e IMAP são usados para recebimento/leitura. FTP é para transferência de arquivos, HTTP para páginas web.'},
+
+{cat:'informatica',src:'extra',
+ e:'(FCC – estilo) No Word, o recurso "Controlar Alterações" serve para:',
+ a:['Corrigir automaticamente erros ortográficos','Registrar todas as modificações feitas no documento, indicando o autor e data de cada alteração','Proteger o documento com senha','Converter o documento para PDF'],
+ c:1, exp:'"Controlar Alterações" (na guia Revisão) registra cada inserção, exclusão e formatação feita, indicando quem fez e quando. É essencial para revisão colaborativa de documentos.'},
+
+/* PENSAMENTO COMPUTACIONAL */
+{cat:'pc',src:'extra',
+ e:'(VUNESP – estilo) Em lógica de programação, uma variável do tipo booleano armazena:',
+ a:['Números inteiros positivos','Texto de qualquer tamanho','Apenas os valores Verdadeiro ou Falso','Números com casas decimais'],
+ c:2, exp:'Variáveis booleanas (bool) armazenam apenas dois estados: Verdadeiro (True/1) ou Falso (False/0). São fundamentais para estruturas de controle e tomadas de decisão em algoritmos.'},
+
+{cat:'pc',src:'extra',
+ e:'(FCC – estilo) Qual estrutura de dados opera no princípio FIFO (First In, First Out)?',
+ a:['Pilha (Stack)','Fila (Queue)','Árvore binária','Grafo'],
+ c:1, exp:'Fila (Queue) segue FIFO: o primeiro elemento inserido é o primeiro a ser removido, como uma fila de banco. Pilha (Stack) segue LIFO: o último inserido é o primeiro a sair.'},
+
+{cat:'pc',src:'extra',
+ e:'(CESGRANRIO – estilo) No Pensamento Computacional, "reconhecimento de padrões" significa:',
+ a:['Criar algoritmos que se repetem infinitamente','Identificar semelhanças e regularidades em dados ou problemas para reutilizar soluções','Dividir um problema em partes menores','Ignorar detalhes irrelevantes de um problema'],
+ c:1, exp:'Reconhecimento de padrões envolve identificar características comuns entre problemas diferentes. Ao reconhecer um padrão, podemos aplicar uma solução já conhecida a novos contextos semelhantes.'},
+
+{cat:'pc',src:'extra',
+ e:'(CESPE – estilo) Em um algoritmo, a estrutura "para i de 1 até 5 faça" executa o bloco interno:',
+ a:['Indefinidamente','4 vezes','5 vezes','6 vezes'],
+ c:2, exp:'O laço "para i de 1 até 5" itera com i assumindo os valores 1, 2, 3, 4 e 5 — totalizando 5 execuções do bloco interno.'},
+
+{cat:'pc',src:'extra',
+ e:'(FGV – estilo) Qual é o resultado de 1011 em binário convertido para decimal?',
+ a:['9','10','11','13'],
+ c:2, exp:'1011 em binário = 1×2³ + 0×2² + 1×2¹ + 1×2⁰ = 8 + 0 + 2 + 1 = 11 em decimal.'},
+
+{cat:'pc',src:'extra',
+ e:'(VUNESP – estilo) O que é um laço infinito (loop infinito) em programação?',
+ a:['Um laço que executa exatamente uma vez','Um laço cuja condição de parada nunca se torna verdadeira, fazendo o programa travar','Um laço que processa infinitos dados em paralelo','Um laço que termina quando encontra um número primo'],
+ c:1, exp:'Loop infinito ocorre quando a condição de saída nunca é satisfeita, fazendo o programa executar o bloco indefinidamente. É geralmente um erro de lógica, causando travamento do programa.'},
+
+{cat:'pc',src:'extra',
+ e:'(CEETEPS – estilo) Em pseudocódigo, qual operador representa a divisão inteira (quociente sem resto)?',
+ a:['/ (barra)','DIV ou // ','MOD ou %','* (asterisco)'],
+ c:1, exp:'DIV (ou // em Python) realiza divisão inteira, retornando apenas o quociente sem decimais. Ex: 17 DIV 5 = 3. O operador MOD (%) retorna o resto da divisão: 17 MOD 5 = 2.'},
+
+{cat:'pc',src:'extra',
+ e:'(FCC – estilo) O conceito de "abstração" no Pensamento Computacional envolve:',
+ a:['Detalhar cada passo de uma solução','Focar nos aspectos essenciais de um problema, ignorando detalhes irrelevantes','Dividir o problema em partes iguais','Identificar padrões repetitivos'],
+ c:1, exp:'Abstração é o processo de simplificar a realidade, mantendo apenas as informações essenciais para resolver o problema. Por exemplo, um mapa é uma abstração do mundo real.'},
+
+{cat:'pc',src:'extra',
+ e:'(CESGRANRIO – estilo) Qual das seguintes é uma estrutura de dados linear?',
+ a:['Árvore binária','Grafo','Lista encadeada','Tabela hash'],
+ c:2, exp:'Listas encadeadas são estruturas lineares — os elementos são organizados em sequência, cada um apontando para o próximo. Árvores e grafos são estruturas não lineares.'},
+
+{cat:'pc',src:'extra',
+ e:'(CESPE – estilo) Em lógica proposicional, a negação de "P E Q" (P AND Q) é equivalente a:',
+ a:['(NÃO P) E (NÃO Q)','(NÃO P) OU (NÃO Q)','NÃO P E Q','P OU Q'],
+ c:1, exp:'Pela Lei de De Morgan: NÃO(P E Q) = (NÃO P) OU (NÃO Q). Analogamente, NÃO(P OU Q) = (NÃO P) E (NÃO Q).'},
+
+{cat:'pc',src:'extra',
+ e:'(FGV – estilo) Qual algoritmo de ordenação tem complexidade O(n log n) no caso médio?',
+ a:['Bubble Sort','Selection Sort','Merge Sort','Insertion Sort'],
+ c:2, exp:'Merge Sort tem complexidade O(n log n) em todos os casos (melhor, médio e pior). É um algoritmo de divisão e conquista que divide o array ao meio recursivamente e mescla as partes ordenadas.'},
+
+/* INTELIGÊNCIA ARTIFICIAL */
+{cat:'ia',src:'extra',
+ e:'(VUNESP – estilo) O aprendizado supervisionado em Machine Learning caracteriza-se por:',
+ a:['O modelo aprender sem qualquer dado de entrada','Treinar o modelo com dados rotulados, onde a resposta correta já é conhecida','O modelo receber recompensas por boas ações','Agrupar dados sem categorias predefinidas'],
+ c:1, exp:'No aprendizado supervisionado, o modelo é treinado com pares entrada-saída (dados rotulados). O algoritmo aprende a mapear entradas para saídas corretas, sendo avaliado por sua precisão nas previsões.'},
+
+{cat:'ia',src:'extra',
+ e:'(FCC – estilo) O que é uma rede neural artificial?',
+ a:['Um sistema de cabos de fibra óptica para transmissão de dados','Um modelo computacional inspirado no cérebro humano, composto por nós (neurônios artificiais) interconectados','Um protocolo de comunicação entre servidores de IA','Um banco de dados especializado em armazenar imagens'],
+ c:1, exp:'Redes neurais artificiais são modelos de aprendizado de máquina inspirados na estrutura do cérebro. Consistem em camadas de neurônios artificiais que processam e transmitem sinais, aprendendo padrões a partir de dados.'},
+
+{cat:'ia',src:'extra',
+ e:'(CESGRANRIO – estilo) O ChatGPT e similares são exemplos de qual tipo de IA?',
+ a:['IA Fraca especializada em diagnóstico médico','Modelos de linguagem de grande escala (LLM) baseados em arquitetura Transformer','Sistemas especialistas baseados em regras fixas','IA Forte com consciência própria'],
+ c:1, exp:'ChatGPT, Claude, Gemini etc. são LLMs (Large Language Models) baseados na arquitetura Transformer. Foram treinados em enormes volumes de texto e geram respostas contextuais em linguagem natural.'},
+
+{cat:'ia',src:'extra',
+ e:'(CESPE – estilo) O aprendizado por reforço (Reinforcement Learning) baseia-se em:',
+ a:['Dados rotulados fornecidos por especialistas','Um agente que aprende interagindo com o ambiente, recebendo recompensas por ações corretas e punições por erros','Agrupamento não supervisionado de dados similares','Redes neurais convolucionais para reconhecimento de imagens'],
+ c:1, exp:'No aprendizado por reforço, um agente aprende por tentativa e erro: realiza ações em um ambiente, recebe recompensas (positivas ou negativas) e ajusta sua política para maximizar a recompensa acumulada. Usado em jogos e robótica.'},
+
+{cat:'ia',src:'extra',
+ e:'(FGV – estilo) O conceito de "overfitting" em Machine Learning significa:',
+ a:['O modelo não consegue aprender nenhum padrão dos dados','O modelo aprende os dados de treinamento perfeitamente, mas falha ao generalizar para dados novos','O modelo demora muito para ser treinado','O modelo usa recursos computacionais excessivos'],
+ c:1, exp:'Overfitting ocorre quando o modelo "memoriza" os dados de treinamento (incluindo ruídos) em vez de aprender padrões gerais. Ele tem alta acurácia no treino, mas baixo desempenho em dados novos (teste).'},
+
+{cat:'ia',src:'extra',
+ e:'(VUNESP – estilo) Em IA, visão computacional é a área responsável por:',
+ a:['Desenvolver interfaces visuais para sistemas de IA','Permitir que computadores interpretem e entendam imagens e vídeos','Criar animações geradas por computador','Projetar monitores de alta resolução'],
+ c:1, exp:'Visão computacional é o campo da IA que permite máquinas interpretarem e tomarem decisões baseadas em imagens e vídeos. Aplicações: reconhecimento facial, diagnóstico médico por imagem, veículos autônomos.'},
+
+{cat:'ia',src:'extra',
+ e:'(CEETEPS – estilo) Qual é a diferença entre IA Fraca (Narrow AI) e IA Forte (AGI)?',
+ a:['IA Fraca é mais cara; IA Forte é mais barata','IA Fraca é especializada em tarefas específicas; IA Forte (AGI) teria capacidades cognitivas equivalentes às humanas em qualquer tarefa','IA Fraca usa menos energia; IA Forte usa mais','IA Fraca funciona offline; IA Forte precisa de internet'],
+ c:1, exp:'IA Fraca (Narrow AI) é projetada para tarefas específicas (reconhecer rostos, jogar xadrez). Toda IA atual é fraca. AGI (Artificial General Intelligence) ainda não existe — seria uma IA com capacidade cognitiva humana abrangente.'},
+
+{cat:'ia',src:'extra',
+ e:'(FCC – estilo) O que é "prompt engineering" no contexto de modelos de linguagem (LLMs)?',
+ a:['A programação do hardware que executa modelos de IA','A técnica de formular instruções (prompts) de forma estratégica para obter melhores respostas de um modelo de IA','O processo de treinar um modelo de IA do zero','A compressão de modelos de IA para dispositivos móveis'],
+ c:1, exp:'Prompt engineering é a prática de elaborar instruções (prompts) de forma estruturada e estratégica para guiar modelos de linguagem a produzirem respostas mais precisas, relevantes e úteis.'},
+
+/* LEGISLAÇÃO */
+{cat:'legislacao',src:'extra',
+ e:'(VUNESP – estilo) A LGPD (Lei nº 13.709/2018) define "dado pessoal sensível" como aquele relacionado a:',
+ a:['Qualquer informação que identifique uma pessoa','Origem racial/étnica, convicção religiosa, dado genético, biométrico, de saúde, orientação sexual, entre outros','Dados financeiros e bancários de pessoas físicas','Informações publicadas em redes sociais'],
+ c:1, exp:'O art. 5º, II da LGPD define dado pessoal sensível como aquele sobre: origem racial ou étnica, convicção religiosa, opinião política, filiação sindical, saúde, vida sexual, dado genético ou biométrico.'},
+
+{cat:'legislacao',src:'extra',
+ e:'(FCC – estilo) Segundo a LGPD, o "titular" dos dados pessoais é:',
+ a:['A empresa que coleta e armazena os dados','A pessoa natural a quem os dados se referem','O governo que regulamenta o uso dos dados','O operador que processa os dados'],
+ c:1, exp:'O art. 5º, V da LGPD define titular como "pessoa natural a quem se referem os dados pessoais que são objeto de tratamento". A empresa que coleta é o controlador; quem processa é o operador.'},
+
+{cat:'legislacao',src:'extra',
+ e:'(CESGRANRIO – estilo) O Marco Civil da Internet (Lei nº 12.965/2014) estabelece como princípio fundamental:',
+ a:['A gratuidade obrigatória de todos os serviços na internet','A neutralidade de rede, garantindo tratamento isonômico dos pacotes de dados','A proibição de publicidade online','O monopólio estatal sobre infraestrutura de internet'],
+ c:1, exp:'A neutralidade de rede é um dos pilares do Marco Civil: provedores devem tratar todos os pacotes de dados de forma igualitária, sem discriminar por origem, destino, serviço ou aplicação.'},
+
+{cat:'legislacao',src:'extra',
+ e:'(CESPE – estilo) A ANPD (Autoridade Nacional de Proteção de Dados) foi criada para:',
+ a:['Fiscalizar o uso da internet no Brasil','Zelar pela proteção dos dados pessoais e fiscalizar o cumprimento da LGPD','Regulamentar os contratos de telecomunicações','Administrar o domínio .br na internet'],
+ c:1, exp:'A ANPD é o órgão federal responsável por zelar pela proteção dos dados pessoais, elaborar diretrizes para a PNPD, fiscalizar e aplicar sanções pelo descumprimento da LGPD.'},
+
+{cat:'legislacao',src:'extra',
+ e:'(FGV – estilo) Pela LGPD, o prazo mínimo que um controlador deve comunicar à ANPD um incidente de segurança que possa causar risco ou dano relevante é:',
+ a:['24 horas','48 horas','72 horas','Em prazo razoável, conforme regulamentação da ANPD'],
+ c:3, exp:'A LGPD (art. 48) determina comunicação em "prazo razoável". A ANPD publicou regulamentação estabelecendo prazo de até 72 horas para comunicação inicial de incidentes relevantes, mas a lei usa o termo "prazo razoável".'},
+
+{cat:'legislacao',src:'extra',
+ e:'(VUNESP – estilo) A Lei de Crimes Cibernéticos (Lei nº 12.737/2012), conhecida como "Lei Carolina Dieckmann", tipifica como crime:',
+ a:['O uso de redes sociais sem cadastro real','A invasão de dispositivos informáticos alheios, sem autorização, com fim de obter dados','O compartilhamento de conteúdo protegido por direitos autorais','O uso de VPN para acessar conteúdo estrangeiro'],
+ c:1, exp:'A Lei 12.737/2012 inseriu no Código Penal o art. 154-A, criminalizando a invasão de dispositivo informático alheio, conectado ou não à internet, sem autorização, para obter, adulterar ou destruir dados ou informações.'},
+
+{cat:'legislacao',src:'extra',
+ e:'(CEETEPS – estilo) Segundo a LGPD, quais são os dois principais agentes de tratamento de dados pessoais?',
+ a:['Titular e Operador','Controlador e Operador','Controlador e ANPD','Titular e Controlador'],
+ c:1, exp:'A LGPD define dois agentes de tratamento: o Controlador (quem toma decisões sobre o tratamento de dados) e o Operador (quem realiza o tratamento em nome do controlador). A ANPD é autoridade reguladora, não agente de tratamento.'},
+
+/* ADMINISTRAÇÃO PÚBLICA */
+{cat:'adm',src:'extra',
+ e:'(VUNESP – estilo) O princípio da legalidade na administração pública significa que:',
+ a:['O administrador público pode fazer tudo o que não é proibido por lei','O administrador público só pode agir quando autorizado por lei','A lei pode ser desrespeitada em casos de interesse público','O administrador pode criar obrigações sem previsão legal'],
+ c:1, exp:'Na Administração Pública, o princípio da legalidade (art. 37, CF) tem sentido estrito: o agente público só pode fazer o que a lei expressamente autoriza — ao contrário do particular, que pode fazer tudo que a lei não proíbe.'},
+
+{cat:'adm',src:'extra',
+ e:'(FCC – estilo) O princípio da impessoalidade na administração pública proíbe:',
+ a:['A contratação de servidores concursados','O uso da máquina pública para promoção pessoal do agente ou do governante','A prestação de serviços públicos a todos os cidadãos','A realização de concursos públicos periódicos'],
+ c:1, exp:'Impessoalidade significa que o agente público age em nome do Estado, não em nome próprio. Proíbe o uso da estrutura pública para promoção pessoal (uso de nome do governante em obras públicas, por exemplo) e exige tratamento igualitário.'},
+
+{cat:'adm',src:'extra',
+ e:'(CESGRANRIO – estilo) O que é o princípio da publicidade na administração pública?',
+ a:['Obrigação do governo de contratar serviços de publicidade','Dever do Estado de dar transparência e divulgar seus atos, salvo exceções legais','Proibição de contratos sigilosos com empresas privadas','Obrigação de publicar todos os salários dos servidores'],
+ c:1, exp:'Publicidade é o dever de tornar públicos os atos da administração, permitindo controle social. Exceções são admitidas por lei (segurança nacional, privacidade). Fundamenta o acesso à informação pública.'},
+
+{cat:'adm',src:'extra',
+ e:'(CESPE – estilo) Em uma licitação pública, a modalidade "pregão" é utilizada para:',
+ a:['Obras de engenharia de grande porte','Aquisição de bens e serviços comuns, onde o julgamento se dá pelo menor preço','Contratações emergenciais dispensadas de licitação','Concessões de serviços públicos'],
+ c:1, exp:'O pregão (Lei 10.520/2002, agora consolidado na Lei 14.133/2021) é modalidade de licitação para bens e serviços comuns (facilmente definidos por padrões objetivos). Julgado pelo menor preço ou maior desconto. Existe em formato presencial e eletrônico.'},
+
+{cat:'adm',src:'extra',
+ e:'(FGV – estilo) O que é administração pública indireta?',
+ a:['A gestão privada de serviços públicos sem vínculo com o Estado','O conjunto de entidades com personalidade jurídica própria criadas pelo Estado para exercer atividades de forma descentralizada (autarquias, fundações, empresas públicas, sociedades de economia mista)','Os órgãos auxiliares da Presidência da República','A gestão de recursos públicos por ONGs credenciadas'],
+ c:1, exp:'Administração indireta compreende entidades com personalidade jurídica própria, criadas pelo Estado por lei: autarquias, fundações públicas, empresas públicas e sociedades de economia mista. Exercem atividades de forma descentralizada.'},
+
+{cat:'adm',src:'extra',
+ e:'(VUNESP – estilo) O concurso público é exigido pela Constituição Federal para:',
+ a:['Todos os cargos públicos, sem exceção','Provimento de cargos efetivos e empregos públicos, salvo exceções constitucionais','Apenas cargos de nível superior na administração federal','Cargos comissionados de confiança do governante'],
+ c:1, exp:'Art. 37, II da CF exige aprovação prévia em concurso público para investidura em cargo ou emprego público efetivo. Cargos em comissão são exceção — de livre nomeação e exoneração. Há também hipóteses de contratação temporária (art. 37, IX).'},
+
+{cat:'adm',src:'extra',
+ e:'(FCC – estilo) O que significa o princípio da eficiência na administração pública (inserido pela EC 19/1998)?',
+ a:['Gastar o mínimo possível, independentemente dos resultados','Executar as atividades com qualidade, rapidez, rendimento e economia, buscando os melhores resultados com os recursos disponíveis','Contratar apenas servidores com formação universitária','Eliminar todos os cargos desnecessários'],
+ c:1, exp:'O princípio da eficiência (art. 37, CF) exige que a administração pública atinja resultados ótimos com o menor custo possível, prezando pela qualidade, celeridade e produtividade dos serviços públicos.'},
+
+/* LEI DE ACESSO À INFORMAÇÃO */
+{cat:'lai',src:'extra',
+ e:'(VUNESP – estilo) A Lei de Acesso à Informação (Lei nº 12.527/2011) estabelece como regra:',
+ a:['O sigilo como regra e a publicidade como exceção','A publicidade como regra e o sigilo como exceção','O acesso restrito a servidores públicos','A divulgação apenas de informações financeiras'],
+ c:1, exp:'A LAI inverte a lógica anterior: publicidade é a regra e o sigilo é exceção. Todo cidadão tem direito de solicitar informações de órgãos e entidades públicas, sem necessidade de apresentar justificativa.'},
+
+{cat:'lai',src:'extra',
+ e:'(FCC – estilo) Segundo a LAI, o prazo para atendimento de um pedido de acesso à informação é de:',
+ a:['5 dias úteis, podendo ser prorrogado por mais 5','20 dias, improrrogáveis','30 dias corridos','10 dias úteis, podendo ser prorrogado por mais 10'],
+ c:0, exp:'Art. 11 da LAI: o órgão tem 20 dias para responder (prorrogáveis por mais 10 dias, com justificativa). Porém, o prazo inicial padrão citado na lei e em provas é de 20 dias, com prorrogação por mais 10.'},
+
+{cat:'lai',src:'extra',
+ e:'(CESGRANRIO – estilo) A LAI classifica as informações sigilosas em quantas categorias de sigilo?',
+ a:['2 (reservada e secreta)','3 (reservada, secreta e ultrassecreta)','4 (restrita, reservada, secreta e ultrassecreta)','5 graus de sigilo'],
+ c:1, exp:'Art. 24 da LAI: as informações sigilosas são classificadas em 3 graus: Reservada (restrição por até 5 anos), Secreta (até 15 anos) e Ultrassecreta (até 25 anos), prorrogável uma única vez no caso de ultrassecreta.'},
+
+{cat:'lai',src:'extra',
+ e:'(CESPE – estilo) Segundo a LAI, o acesso à informação pode ser negado quando a informação for:',
+ a:['Inconveniente para a imagem do governo','Classificada como sigilosa, envolver dados pessoais de terceiros ou comprometer investigações em andamento','Solicitada por pessoa sem graduação universitária','Relacionada a contratos com empresas privadas'],
+ c:1, exp:'A LAI prevê hipóteses legítimas de restrição: informações classificadas como sigilosas (reservada, secreta, ultrassecreta), dados pessoais protegidos e informações que possam comprometer segurança, investigações ou processos decisórios.'},
+
+{cat:'lai',src:'extra',
+ e:'(FGV – estilo) A transparência ativa, prevista na LAI, consiste em:',
+ a:['Publicar informações apenas quando houver pedido formal','Divulgar informações de interesse coletivo proativamente, independente de solicitação, especialmente em sítios na internet','Permitir acesso a qualquer documento mediante pagamento de taxa','Responder pedidos de informação em audiências públicas'],
+ c:1, exp:'Transparência ativa (art. 8º da LAI): órgãos devem divulgar proativamente informações de interesse público em seus sites, como receitas, despesas, contratos, licitações e estrutura organizacional — sem necessidade de pedido.'},
+
+{cat:'lai',src:'extra',
+ e:'(VUNESP – estilo) Qual órgão é responsável por monitorar o cumprimento da LAI no âmbito do Poder Executivo Federal?',
+ a:['ANPD','Tribunal de Contas da União (TCU)','Controladoria-Geral da União (CGU)','Ministério da Fazenda'],
+ c:2, exp:'A CGU (Controladoria-Geral da União) é o órgão central do Sistema de Controle Interno do Executivo Federal, responsável por monitorar o cumprimento da LAI, receber recursos contra negativas de acesso e promover transparência pública.'},
+
+{cat:'lai',src:'extra',
+ e:'(CEETEPS – estilo) Segundo a LAI, o pedido de acesso à informação deve conter:',
+ a:['Justificativa detalhada do motivo da solicitação','Apenas identificação do requerente e especificação da informação solicitada','Comprovante de pagamento de taxa','Procuração reconhecida em cartório'],
+ c:1, exp:'Art. 10 da LAI: o pedido deve conter apenas a identificação do requerente e a especificação da informação desejada. Não é necessário apresentar motivo ou justificativa, e não pode ser cobrada taxa pelo pedido.'},
+
+];
+
 /* ───── MOTOR DO SIMULADO ───── */
 let acertos = 0, respondidas = 0;
-const total = Q.length;
 let catAtiva = 'todas';
+let shuffleMap = [];
+const usedExtras = new Set(); // índices do QEXTRA já adicionados
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function prepareShuffleMap() {
+  shuffleMap = Q.map(q => shuffleArray(q.a.map((_, i) => i)));
+}
 
 function render() {
   const main = document.getElementById('main');
-  // limpa mantendo stats-bar
   const sb = document.getElementById('stats-bar');
   main.innerHTML = '';
   main.appendChild(sb);
 
+  prepareShuffleMap();
+
   Q.forEach((q, i) => {
     const div = document.createElement('div');
     div.className = 'questao';
-    div.style.display=(catAtiva==='todas'||catAtiva===q.cat)?'block':'none';
-    div.id = 'q'+i;
+    div.style.display = (catAtiva === 'todas' || catAtiva === q.cat) ? 'block' : 'none';
+    div.id = 'q' + i;
 
     const cats = {informatica:'🖥️ Informática',pc:'🧠 Pens. Computacional',ia:'🤖 Int. Artificial',legislacao:'📜 Legislação',adm:'🏛️ Adm. Pública',lai:'🔓 Lei Acesso à Info.'};
-    const srcBadge = q.src==='real' ? '<span class="badge-real">⭐ Prova Real</span>' : '';
+    const srcBadge = q.src === 'real' ? '<span class="badge-real">⭐ Prova Real</span>' :
+                     q.src === 'extra' ? '<span class="badge-real" style="background:#e8f4fd;color:#0a558c;border-color:#3498db;">➕ Extra</span>' : '';
+
+    const ordem = shuffleMap[i];
+    const altsHtml = ordem.map((origIdx, pos) =>
+      `<li><label id="L${i}_${pos}"><input type="radio" name="rq${i}" value="${pos}"> ${String.fromCharCode(65+pos)}) ${q.a[origIdx]}</label></li>`
+    ).join('');
 
     div.innerHTML = `
       <div class="qh">
         <div class="num">${i+1}</div>
-        <span class="tag">${cats[q.cat]}</span>
+        <span class="tag">${cats[q.cat] || q.cat}</span>
         ${srcBadge}
       </div>
       <p class="enunciado">${q.e}</p>
-      <ul class="alternativas">
-        ${q.a.map((alt,j)=>`<li><label id="L${i}_${j}"><input type="radio" name="rq${i}" value="${j}"> ${String.fromCharCode(65+j)}) ${alt}</label></li>`).join('')}
-      </ul>
+      <ul class="alternativas">${altsHtml}</ul>
       <button class="btn-conf" onclick="conf(${i})">Confirmar resposta</button>
       <div class="feedback" id="fb${i}"></div>
     `;
@@ -2011,74 +2367,135 @@ function render() {
 function conf(i) {
   const sel = document.querySelector(`input[name="rq${i}"]:checked`);
   if (!sel) { alert('Selecione uma alternativa.'); return; }
-  const val = parseInt(sel.value);
+  const posEscolhida = parseInt(sel.value);
   const q = Q[i];
-  const fb = document.getElementById('fb'+i);
+  const fb = document.getElementById('fb' + i);
   const btn = document.querySelector(`#q${i} .btn-conf`);
+  const ordem = shuffleMap[i];
 
-  document.querySelectorAll(`input[name="rq${i}"]`).forEach(r=>r.disabled=true);
+  document.querySelectorAll(`input[name="rq${i}"]`).forEach(r => r.disabled = true);
   btn.disabled = true;
 
-  q.a.forEach((_,j)=>{
-    const lbl = document.getElementById(`L${i}_${j}`);
-    if(j===q.c) lbl.classList.add('correta');
-    else if(j===val&&val!==q.c) lbl.classList.add('errada');
+  const posCorreta = ordem.indexOf(q.c);
+  const origEscolhida = ordem[posEscolhida];
+
+  ordem.forEach((origIdx, pos) => {
+    const lbl = document.getElementById(`L${i}_${pos}`);
+    if (pos === posCorreta) lbl.classList.add('correta');
+    else if (pos === posEscolhida && posEscolhida !== posCorreta) lbl.classList.add('errada');
   });
 
-  if(val===q.c){ acertos++; fb.className='feedback ok'; fb.innerHTML='✅ <strong>Correto!</strong> '+q.exp; }
-  else { fb.className='feedback err'; fb.innerHTML='❌ <strong>Incorreto.</strong> '+q.exp; }
-  fb.style.display='block';
+  if (origEscolhida === q.c) {
+    acertos++;
+    fb.className = 'feedback ok';
+    fb.innerHTML = '✅ <strong>Correto!</strong> ' + q.exp;
+  } else {
+    fb.className = 'feedback err';
+    fb.innerHTML = '❌ <strong>Incorreto.</strong> ' + q.exp;
+  }
+  fb.style.display = 'block';
   respondidas++;
   updStats();
   updBarra();
-  var visCount=0,ansCount=0;
-  for(var k=0;k<Q.length;k++){var el=document.getElementById('q'+k);if(el&&el.style.display!=='none'){visCount++;var bt=el.querySelector('button');if(bt&&bt.disabled)ansCount++;}}
-  if(ansCount>0&&ansCount===visCount) showResult();
+
+  var visCount = 0, ansCount = 0;
+  for (var k = 0; k < Q.length; k++) {
+    var el = document.getElementById('q' + k);
+    if (el && el.style.display !== 'none') {
+      visCount++;
+      var bt = el.querySelector('button');
+      if (bt && bt.disabled) ansCount++;
+    }
+  }
+  if (ansCount > 0 && ansCount === visCount) showResult();
 }
 
 function updStats() {
-  const pct = respondidas>0?Math.round(acertos/respondidas*100):0;
+  const vis = catAtiva === 'todas' ? Q.length : Q.filter(q => q.cat === catAtiva).length;
+  const pct = respondidas > 0 ? Math.round(acertos / respondidas * 100) : 0;
+  document.getElementById('s-total').textContent = vis;
   document.getElementById('s-resp').textContent = respondidas;
   document.getElementById('s-ac').textContent = acertos;
-  document.getElementById('s-pct').textContent = pct+'%';
+  document.getElementById('s-pct').textContent = pct + '%';
   document.getElementById('ac-f').textContent = acertos;
   document.getElementById('re-f').textContent = respondidas;
 }
 
 function updBarra() {
-  document.getElementById('barra-fill').style.width=(respondidas/total*100)+'%';
+  document.getElementById('barra-fill').style.width = (respondidas / Q.length * 100) + '%';
 }
 
 function showResult() {
   const r = document.getElementById('resultado');
-  r.style.display='block';
-  const pct = Math.round(acertos/total*100);
-  document.getElementById('pf').textContent = acertos+' / '+total+' ('+pct+'%)';
-  const msg = pct>=70?'🎉 Excelente! Você está bem preparado(a) para a prova.':pct>=50?'📖 Bom progresso! Revise os temas em que errou.':'💡 Continue estudando! Foque nas categorias com mais erros.';
+  r.style.display = 'block';
+  const pct = Math.round(acertos / Q.length * 100);
+  document.getElementById('pf').textContent = acertos + ' / ' + Q.length + ' (' + pct + '%)';
+  const msg = pct >= 70 ? '🎉 Excelente! Você está bem preparado(a) para a prova.' :
+              pct >= 50 ? '📖 Bom progresso! Revise os temas em que errou.' :
+              '💡 Continue estudando! Foque nas categorias com mais erros.';
   document.getElementById('msg-r').textContent = msg;
-  r.scrollIntoView({behavior:'smooth'});
+  r.scrollIntoView({behavior: 'smooth'});
 }
 
 function filtrar(cat, btn) {
   catAtiva = cat;
-  document.querySelectorAll('.aba').forEach(a=>a.classList.remove('ativo'));
+  document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativo'));
   btn.classList.add('ativo');
-  for(var i=0;i<Q.length;i++){
-    var el=document.getElementById('q'+i);
-    if(!el)continue;
-    var show=(cat==='todas'||Q[i].cat===cat);
-    el.style.display=show?'block':'none';
+  for (var i = 0; i < Q.length; i++) {
+    var el = document.getElementById('q' + i);
+    if (!el) continue;
+    el.style.display = (cat === 'todas' || Q[i].cat === cat) ? 'block' : 'none';
   }
-  const vis = cat==='todas'?total:Q.filter(q=>q.cat===cat).length;
-  document.getElementById('s-total').textContent = vis;
-  document.getElementById('main').scrollIntoView({behavior:'smooth'});
+  updStats();
+  document.getElementById('main').scrollIntoView({behavior: 'smooth'});
 }
 
 function reiniciar() {
-  acertos=0; respondidas=0;
-  document.getElementById('resultado').style.display='none';
+  acertos = 0; respondidas = 0;
+  document.getElementById('resultado').style.display = 'none';
   render();
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+/* ───── PAINEL EXTRAS ───── */
+function togglePanel() {
+  const p = document.getElementById('panel-extra');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('msg-extra').textContent = '';
+}
+
+function adicionarExtras() {
+  const catSel = document.getElementById('cat-extra').value;
+  const qtd = Math.min(parseInt(document.getElementById('qtd-extra').value) || 10, 50);
+  const msg = document.getElementById('msg-extra');
+
+  // Filtra questões disponíveis (não usadas, da categoria certa)
+  const disponiveis = QEXTRA.map((q, i) => ({q, i}))
+    .filter(({q, i}) => !usedExtras.has(i) && (catSel === 'todas' || q.cat === catSel));
+
+  if (disponiveis.length === 0) {
+    msg.style.color = '#c0392b';
+    msg.textContent = '⚠️ Todas as questões extras desta categoria já foram adicionadas nesta sessão!';
+    return;
+  }
+
+  // Embaralha disponíveis e pega até qtd
+  const sorteadas = shuffleArray(disponiveis).slice(0, qtd);
+
+  sorteadas.forEach(({q, i}) => {
+    usedExtras.add(i);
+    Q.push({...q});
+  });
+
+  render();
+
+  // Rola até a primeira questão adicionada
+  const primeiraIdx = Q.length - sorteadas.length;
+  const el = document.getElementById('q' + primeiraIdx);
+  if (el) setTimeout(() => el.scrollIntoView({behavior: 'smooth'}), 100);
+
+  msg.style.color = '#1a8a50';
+  msg.textContent = `✅ ${sorteadas.length} questão(ões) adicionada(s)! Restam ${disponiveis.length - sorteadas.length} extras disponíveis para esta categoria.`;
 }
 
 render();
