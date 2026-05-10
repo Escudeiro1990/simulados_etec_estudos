@@ -104,6 +104,7 @@
   <button class="aba" onclick="filtrar('legislacao',this)">📜 Legislação</button>
   <button class="aba" onclick="filtrar('adm',this)">🏛️ Adm. Pública</button>
   <button class="aba" onclick="filtrar('lai',this)">🔓 Lei Acesso à Info.</button>
+  <button class="aba" onclick="filtrar('jogos',this)">🎮 Prog. Jogos</button>
 </div>
 
 <main id="main">
@@ -141,6 +142,7 @@
           <option value="legislacao">📜 Legislação</option>
           <option value="adm">🏛️ Adm. Pública</option>
           <option value="lai">🔓 Lei Acesso à Informação</option>
+          <option value="jogos">🎮 Prog. Jogos</option>
         </select>
       </div>
       <div class="ex-group" style="max-width:110px">
@@ -2011,7 +2013,109 @@ const Q = [
 {cat:'ia', src:'novo',
  e:'(IA – Direitos Autorais) Em relação ao uso de imagens geradas por IA, uma questão ética relevante é:',
  a:['As imagens geradas por IA são sempre de domínio público, sem qualquer restrição','A possibilidade de violação de direitos autorais ao gerar imagens que reproduzam estilos de artistas sem autorização, e a indefinição sobre quem detém os direitos','A proibição absoluta de qualquer uso comercial de imagens geradas por IA','A obrigação de creditar os desenvolvedores do modelo em toda imagem gerada'],
- c:1, exp:'A geração de imagens por IA levanta questões éticas e legais: modelos treinados com obras de artistas sem autorização podem reproduzir seus estilos; a titularidade dos direitos sobre imagens geradas ainda não tem regulamentação consolidada.'}
+ c:1, exp:'A geração de imagens por IA levanta questões éticas e legais: modelos treinados com obras de artistas sem autorização podem reproduzir seus estilos; a titularidade dos direitos sobre imagens geradas ainda não tem regulamentação consolidada.'},
+
+/* ───── PROGRAMAÇÃO PARA JOGOS ───── */
+{cat:'jogos',
+ e:'(Prog. Jogos) Em um motor de jogo, qual é a diferença entre um plug-in e uma biblioteca?',
+ a:['São sinônimos; ambos funcionam da mesma forma','Um plug-in se encaixa no motor estendendo suas funcionalidades; uma biblioteca é um conjunto de funções que o programador chama diretamente no código','Um plug-in substitui o motor de jogo; uma biblioteca o complementa','Plug-ins só funcionam em jogos 3D; bibliotecas apenas em 2D'],
+ c:1, exp:'Plug-in é um módulo que se integra ao motor de jogo estendendo suas capacidades sem alterar seu núcleo (ex: plug-in de física, de IA). Biblioteca é um conjunto de funções/classes que o programador usa diretamente no código, sem integração especial ao motor.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Qual tipo de dado é mais adequado para armazenar a velocidade de movimentação de um personagem em um motor de jogo?',
+ a:['bool','int','float','string'],
+ c:2, exp:'float (número de ponto flutuante) é o tipo ideal para velocidade, posição e outros valores contínuos em jogos, pois permite casas decimais (ex: 3.5f). int armazena apenas inteiros; bool é verdadeiro/falso; string é texto.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Em orientação a objetos aplicada a jogos, considere a classe Personagem com atributo vida e método Mover(). A classe Inimigo herda de Personagem e adiciona o método Atacar(). Essa relação é um exemplo de:',
+ a:['Encapsulamento','Polimorfismo','Herança','Abstração pura'],
+ c:2, exp:'Herança permite que uma classe filha (Inimigo) herde atributos e métodos da classe pai (Personagem), podendo adicionar novos comportamentos. Inimigo herda vida e Mover(), e acrescenta Atacar().'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Qual é a diferença entre parâmetro e argumento em uma função de jogo como void Mover(float velocidade)?',
+ a:['São sinônimos na programação orientada a objetos','Parâmetro é a variável declarada na definição do método (velocidade); argumento é o valor passado na chamada (ex: Mover(3.5f))','Argumento é declarado na definição; parâmetro é o valor passado na chamada','Parâmetros são usados apenas em construtores; argumentos nos demais métodos'],
+ c:1, exp:'Parâmetro é a variável declarada na assinatura do método (float velocidade na definição). Argumento é o valor concreto enviado ao chamar o método (3.5f em Mover(3.5f)). Macete: Parâmetro = definição; Argumento = ação de chamar.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Em um script de jogo, o trecho a seguir é executado quantas vezes?\nfor(int i = 0; i < 5; i++) { Spawnar(); }',
+ a:['4 vezes','5 vezes','6 vezes','Indefinidamente'],
+ c:1, exp:'O laço for executa enquanto i < 5, com i assumindo os valores 0, 1, 2, 3 e 4 — totalizando 5 execuções. O bloco é executado 5 vezes.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Um vetor (array unidimensional) de tamanho 8 em C# possui índices válidos de:',
+ a:['1 a 8','0 a 8','0 a 7','1 a 7'],
+ c:2, exp:'Arrays em C# (e na maioria das linguagens) começam no índice 0. Um array de tamanho 8 possui os índices 0, 1, 2, 3, 4, 5, 6 e 7. Acessar o índice 8 gera IndexOutOfRangeException.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Uma matriz bidimensional int[,] mapa = new int[10, 10] é frequentemente usada em jogos para representar:',
+ a:['A lista de sons do jogo','Um mapa de tiles (grade de blocos do cenário)','O histórico de pontuações do jogador','As animações do personagem principal'],
+ c:1, exp:'Matrizes 2D são ideais para representar grades, como mapas de tiles (tilemap). Cada posição mapa[linha, coluna] armazena um valor inteiro que representa o tipo de bloco naquela posição do cenário.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) O encapsulamento em orientação a objetos é aplicado em jogos quando:',
+ a:['Uma classe herda métodos de outra','O mesmo método se comporta diferente em subclasses','Atributos internos do objeto são declarados como private, sendo acessados externamente apenas por propriedades (get/set)','Um objeto é instanciado a partir de uma classe'],
+ c:2, exp:'Encapsulamento protege os dados internos declarando atributos como private e expondo acesso controlado via propriedades (get/set) ou métodos públicos. Isso impede que código externo altere o estado do objeto de forma inesperada.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Em Unity, qual método é chamado automaticamente pelo motor a cada frame renderizado?',
+ a:['Start()','Awake()','Update()','OnEnable()'],
+ c:2, exp:'Update() é chamado pelo motor a cada frame. É onde se coloca lógica contínua como movimento, verificação de input e timers. Start() é chamado uma única vez ao iniciar; Awake() antes do Start(); OnEnable() ao ativar o objeto.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Por que é importante multiplicar a velocidade de movimentação por Time.deltaTime (deltaTime) em um script de jogo?',
+ a:['Para aumentar a velocidade do personagem automaticamente','Para garantir que o movimento seja independente da taxa de frames (FPS), sendo igual em máquinas lentas e rápidas','Para limitar o número de frames por segundo do jogo','Para sincronizar a física com a renderização 3D'],
+ c:1, exp:'deltaTime é o tempo decorrido entre o frame atual e o anterior. Multiplicar por deltaTime garante que o movimento seja baseado em tempo real, não em frames. Sem isso, o personagem se move mais rápido em máquinas com maior FPS.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Qual das alternativas descreve corretamente o polimorfismo aplicado a jogos?',
+ a:['Criar múltiplos objetos a partir da mesma classe','O método Atacar() se comporta de forma diferente em Guerreiro, Mago e Arqueiro, todos subclasses de Personagem','Proteger os atributos de uma classe com modificadores private','Reutilizar código de uma classe pai em uma classe filha'],
+ c:1, exp:'Polimorfismo permite que subclasses implementem o mesmo método de formas distintas (usando override). Guerreiro, Mago e Arqueiro herdam Atacar() de Personagem, mas cada um executa sua própria versão do ataque.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Ao exportar um jogo em Unity para Android, o arquivo gerado é:',
+ a:['.exe','.ipa','.apk ou .aab','.dmg'],
+ c:2, exp:'Para Android, Unity gera arquivos .apk (Android Package) ou .aab (Android App Bundle, formato mais moderno exigido pela Google Play). .exe é para Windows; .ipa para iOS; .dmg para instaladores macOS.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Qual estrutura de controle é mais adequada para gerenciar os diferentes estados de um jogo (menu, jogando, pausado, game over)?',
+ a:['for','while','switch','do-while'],
+ c:2, exp:'switch é ideal para múltiplos estados discretos, pois avalia uma variável e executa o bloco correspondente a cada caso (case "menu", case "jogando", etc.), tornando o código mais legível que vários if/else if encadeados.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Em orientação a objetos, o que é uma instância (objeto)?',
+ a:['O código-fonte de uma classe','Uma cópia concreta e viva criada a partir de uma classe, com seus próprios valores de atributos','O método principal que inicia o jogo','Um arquivo de configuração do motor de jogo'],
+ c:1, exp:'Classe é o molde/modelo. Objeto (instância) é a entidade concreta criada a partir desse molde com new. Cada instância tem seus próprios valores de atributos: inimigo1.vida = 100, inimigo2.vida = 50, ambos da mesma classe Inimigo.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) No contexto de motores de jogo, o que é um componente (Component)?',
+ a:['Um arquivo de imagem usado como textura','Um módulo de comportamento ou dado anexado a um objeto de jogo, seguindo o padrão composição ao invés de herança','O código de inteligência artificial de um NPC','Uma cena independente dentro do jogo'],
+ c:1, exp:'Componente é um módulo reutilizável anexado a GameObjects (Unity) ou Nodes (Godot). Ex: Transform (posição), Rigidbody (física), AudioSource (som). Esse padrão (composição) favorece flexibilidade em relação à herança profunda.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Qual das opções a seguir representa corretamente a declaração de um vetor de 5 inimigos em C#?',
+ a:['Inimigo[] inimigos = new Inimigo(5);','Inimigo inimigos[5];','Inimigo[] inimigos = new Inimigo[5];','var inimigos = Inimigo[5];'],
+ c:2, exp:'Em C#, arrays são declarados com colchetes após o tipo e instanciados com new Tipo[tamanho]. A sintaxe correta é: Inimigo[] inimigos = new Inimigo[5]; criando um array de 5 referências para objetos do tipo Inimigo.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) A compilação de um jogo para múltiplas plataformas (desktop, mobile, console) exige:',
+ a:['Reescrever todo o código-fonte para cada plataforma','Configurar builds específicas no motor para cada plataforma-alvo, pois cada uma tem arquitetura, controles e restrições diferentes','Apenas alterar as configurações gráficas do jogo','Utilizar linguagens de programação diferentes para cada plataforma'],
+ c:1, exp:'Motores como Unity permitem exportar para múltiplas plataformas a partir do mesmo projeto, mas exigem configurações de build distintas: ícones, resoluções, controles (toque vs teclado), certificados (iOS/consoles) e SDKs específicos de cada fabricante.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Em um script de jogo, qual estrutura de repetição deve ser usada para percorrer todos os itens do inventário de um jogador armazenados em uma lista?',
+ a:['if/else','switch','foreach','do-while'],
+ c:2, exp:'foreach é ideal para percorrer coleções (listas, arrays) pois itera automaticamente por todos os elementos sem precisar gerenciar índice manualmente. Ex: foreach(Item i in inventario) { i.Usar(); }'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) Qual é a função do método construtor em uma classe de jogo?',
+ a:['Destruir o objeto quando ele sai da tela','Inicializar os atributos do objeto no momento em que ele é criado com new','Atualizar os valores dos atributos a cada frame','Verificar colisões entre objetos'],
+ c:1, exp:'O construtor é um método especial chamado automaticamente ao criar um objeto com new. Sua função é inicializar os atributos com valores iniciais. Ex: new Inimigo() chama o construtor que define vida=100, velocidade=3f etc.'},
+
+{cat:'jogos',
+ e:'(Prog. Jogos) O tipo de dado Vector3 presente em motores de jogo 3D armazena:',
+ a:['Três valores booleanos representando eixos ativos','As coordenadas x, y e z de posição, direção ou escala no espaço tridimensional','A cor de um objeto no formato RGB','O identificador único de um objeto na cena'],
+ c:1, exp:'Vector3 armazena três valores float (x, y, z) usados para representar posição, direção, velocidade ou escala no espaço 3D. Ex: transform.position = new Vector3(0, 1, 0) posiciona o objeto em y=1 (1 unidade acima do chão).'}
+
 ];
 
 
@@ -2339,7 +2443,7 @@ function render() {
     div.style.display = (catAtiva === 'todas' || catAtiva === q.cat) ? 'block' : 'none';
     div.id = 'q' + i;
 
-    const cats = {informatica:'🖥️ Informática',pc:'🧠 Pens. Computacional',ia:'🤖 Int. Artificial',legislacao:'📜 Legislação',adm:'🏛️ Adm. Pública',lai:'🔓 Lei Acesso à Info.'};
+    const cats = {informatica:'🖥️ Informática',pc:'🧠 Pens. Computacional',ia:'🤖 Int. Artificial',legislacao:'📜 Legislação',adm:'🏛️ Adm. Pública',lai:'🔓 Lei Acesso à Info.',jogos:'🎮 Prog. Jogos'};
     const srcBadge = q.src === 'real' ? '<span class="badge-real">⭐ Prova Real</span>' :
                      q.src === 'extra' ? '<span class="badge-real" style="background:#e8f4fd;color:#0a558c;border-color:#3498db;">➕ Extra</span>' : '';
 
